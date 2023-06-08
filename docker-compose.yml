@@ -1,0 +1,14 @@
+version: '3.8'
+services: 
+  scis-db:
+    image: postgres:13
+    ports:
+      - 5434:5432
+    environment:
+      - POSTGRES_USER=postgresql
+      - POSTGRES_PASSWORD=postgresql
+      - POSTGRES_DB=scis-db
+    networks:
+      - scisnetwork
+networks:
+  scisnetwork:
