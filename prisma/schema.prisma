@@ -24,7 +24,9 @@ model School {
 
 model scisUser {
   id           Int       @id @default(autoincrement())
-  email        String    @unique
+  scisuserid   String    @unique
+
+  // the hash is there to replace the password
   password     String
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -152,12 +154,13 @@ model Parent {
   studentId    Int
 }
 
+// add more details in userprofile
 model UserProfile {
   id           Int       @id @default(autoincrement())
   firstName    String?
   lastName     String?
   createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  updatedAt    DateTime  @updatedAt 
 
   // Relations
   user         scisUser      @relation(fields: [userId], references: [id])

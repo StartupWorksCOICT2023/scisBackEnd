@@ -1,0 +1,24 @@
+The convetion to use for scis user id ABCHS-23-001
+
+function generateUserID(schoolCode, uniqueIdentifier) {
+  // Get the current year
+  const currentYear = new Date().getFullYear();
+
+  // Format the year as a two-digit representation
+  const formattedYear = currentYear.toString().slice(-2);
+
+  // Pad the unique identifier with leading zeros if necessary
+  const paddedIdentifier = String(uniqueIdentifier).padStart(3, '0');
+
+  // Concatenate the components to create the user ID
+  const userID = `${schoolCode}-${formattedYear}-${paddedIdentifier}`;
+
+  return userID;
+}
+
+// Example usage
+const schoolCode = 'ABCHS';
+const uniqueIdentifier = 2;
+
+const userID = generateUserID(schoolCode, uniqueIdentifier);
+console.log(userID); // Output: ABCHS-23-002 (assuming the current year is 2023)
