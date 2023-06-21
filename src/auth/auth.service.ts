@@ -52,7 +52,7 @@ export class AuthService {
   async signToken(
     scisuserid: string,
     id: number,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string, refresh_token: string }> {
     const payload = {
       sub: scisuserid,
       id,
@@ -62,13 +62,57 @@ export class AuthService {
     const token = await this.jwt.signAsync(
       payload,
       {
-        expiresIn: '120m', //time to expireis 120 minutes
+        expiresIn: '60s', //time to expireis 4 minutes
         secret: secret,
       },
     );
 
+    //refresh token
+
+    const refresh = await this.jwt.signAsync(
+      payload,
+      {
+        expiresIn: '7d', //time to expireis 4 minutes
+        secret: secret,  //the secret word passed in .env file
+      },
+    );
+
+
+    // create a refresh token here 
+
     return {
       access_token: token,
+      refresh_token: refresh
     };
   }
+
+  
+  // CROSSCHECK THIS  this
+  async refreshToken(refreshToken: string): Promise<{ access_token: string }> {
+  const secret = this.config.get('JWT_SECRET');
+
+  // Verify the refresh token
+  const decoded = await this.jwt.verifyAsync(refreshToken, { secret });
+
+  // Extract the necessary payload information
+  const scisuserid = decoded.sub;
+  const id = decoded.id;
+
+  const payload = {
+    sub: scisuserid,
+    id,
+  };
+
+  // Generate a new access token
+  const token = await this.jwt.signAsync(payload, {
+    expiresIn: '4m', // Time to expire is 4 minutes
+    secret: secret,
+  });
+
+  return {
+    access_token: token,
+  };
+}
+
+
 }

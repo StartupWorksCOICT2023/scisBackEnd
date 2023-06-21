@@ -5,19 +5,27 @@ import {
     HttpStatus,
     Post,
     Req,
+    Request,
+    UseGuards,
   } from '@nestjs/common';
   import { AuthService } from './auth.service';
   import { AuthDto } from './dto';
+import { RefreshJwtGuard } from './guard/refresh-jwt-auth.guard';
   
   @Controller('auth')
   export class AuthController {
     constructor(private authService: AuthService) {}
 
     @HttpCode(HttpStatus.OK)
-    @Post('signin')
+    @Post('signin')  //            /auth/signin
     signin(@Body() dto: AuthDto) {
       return this.authService.signin(dto);
     }
 
+    @UseGuards(RefreshJwtGuard)
+    @Post('refresh') // /auth/refresh
+    async refreshToken(@Body() body: { refresh: string }) {
+    return this.authService.refreshToken(body.refresh);
+}
     
   }
