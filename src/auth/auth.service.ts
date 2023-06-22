@@ -15,13 +15,14 @@ export class AuthService {
    //creating an endpoint
    @Post('signin')
    async signin(dto: AuthDto) {
-    // find the user by email
-    const scisuser =
-      await this.prisma.scisUser.findUnique({
-        where: {
-          scisuserid: dto.scisuserid,
-        },
-      });
+    const { scisuserid, password } = dto;
+    // find the user by scisuserid
+    const scisuser = await this.prisma.scisUser.findUnique({
+      where: {
+        scisuserid: scisuserid,
+      },
+    });
+  
     // if user does not exist throw exception
     if (!scisuser)
       throw new ForbiddenException(
@@ -42,7 +43,16 @@ export class AuthService {
       throw new ForbiddenException(
         'Password Credentials incorrect',
       );
-      return this.signToken(scisuser.scisuserid, scisuser.id);
+
+
+      // call the sign token to get the tokens.
+      const tokens = await this.signToken(scisuser.scisuserid, scisuser.id);
+
+      // combine our tokens with our user
+      return {
+        ...tokens,
+       user: scisuser,
+  };
   }
 
 
@@ -79,6 +89,9 @@ export class AuthService {
 
 
     // create a refresh token here 
+      // debugging
+    console.log(`access token: ${token}`)
+    console.log(`refresh token: ${refresh}`)
 
     return {
       access_token: token,
@@ -108,6 +121,11 @@ export class AuthService {
     expiresIn: '4m', // Time to expire is 4 minutes
     secret: secret,
   });
+
+
+
+  // debugging
+  console.log(token)
 
   return {
     access_token: token,
