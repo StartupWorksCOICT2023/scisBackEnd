@@ -79,6 +79,7 @@ model ClassLevel {
   name         String
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  //class_code i.e F32023
 
   // Relations
   students     Student[] @relation("ClassLevelStudents")
@@ -90,6 +91,7 @@ model Subject {
   name         String
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  //subjectcode i.e F3GEOG2020
 
   // Relations
   teacher      Teacher   @relation(fields: [teacherId], references: [id])
@@ -103,6 +105,8 @@ model Test {
   name         String
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  // test type i.e Terminal, quiz, exam, Midterm
+  // test code
 
   // Relations
   subject      Subject   @relation(fields: [subjectId], references: [id])
@@ -158,6 +162,13 @@ model UserProfile {
   lastName     String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  //dob
+  //phone1? (why optional is if its a student)
+  //phone2?
+  //gender
+  //religion
+  //classes [], if a student has one class if a teacher has many
+  //occupation 
 
   // Relations
   user         scisUser      @relation(fields: [userId], references: [id])

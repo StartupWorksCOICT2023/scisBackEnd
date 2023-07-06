@@ -21,6 +21,7 @@ export class AuthService {
       where: {
         scisuserid: scisuserid,
       },
+      include: { roles: true },
     });
   
     // if user does not exist throw exception
@@ -72,7 +73,7 @@ export class AuthService {
     const token = await this.jwt.signAsync(
       payload,
       {
-        expiresIn: '60s', //time to expireis 4 minutes
+        expiresIn: '10m', //time to expireis 4 minutes
         secret: secret,
       },
     );
@@ -118,7 +119,7 @@ export class AuthService {
 
   // Generate a new access token
   const token = await this.jwt.signAsync(payload, {
-    expiresIn: '4m', // Time to expire is 4 minutes
+    expiresIn: '10m', // Time to expire is 4 minutes
     secret: secret,
   });
 
@@ -129,6 +130,34 @@ export class AuthService {
 
   return {
     access_token: token,
+  };
+}
+
+
+// logout operations
+
+@Post('logout')     //auth/logout
+async logout() {
+  // You can perform any necessary operations here to invalidate the user's tokens
+  // For example, you can remove the tokens from the database or add them to a blacklist
+  // This depends on your specific implementation and requirements
+
+  // Return a response indicating a successful logout
+  return {
+    message: 'Logout successful',
+  };
+}
+
+
+@Post('changepassword')     //auth/logout
+async changePassword() {
+  // You can perform any necessary operations here to invalidate the user's tokens
+  // For example, you can remove the tokens from the database or add them to a blacklist
+  // This depends on your specific implementation and requirements
+
+  // Return a response indicating a successful logout
+  return {
+    message: 'Logout successful',
   };
 }
 
