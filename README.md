@@ -71,3 +71,36 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+
+
+
+## CURRENT_EXISTING_ENDPOINTS;
+
+- Authentication
+
+    /auth/signin
+
+    Accepts scisuserid:
+            password:
+
+
+    Jwt protected
+    
+    /userprofile/:id
+
+    GET - gets user profile by the passed id
+    Accepts: id
+    returns scisuser object, including roles relations
+
+    POST - creates user profile by the passed id
+    Accepts: id
+             body -scisuserid (not empty)
+                  -firstname (not empty)
+                  -
+                  -
+                  -
+                  -
+                  -
+
+    returns scisuser object, including roles relations

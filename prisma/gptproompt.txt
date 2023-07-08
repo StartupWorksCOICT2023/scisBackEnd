@@ -1,4 +1,104 @@
-The convetion to use for scis user id ABCHS-23-001
+The convetion to use for scis user id ABCHS-23-001 for scis ID
+
+
+why do i need to do this 
+  @IsOptional()
+  lastName  ?: string, the question is why both..
+
+
+
+
+
+
+
+explain this to the core " // create organization
+  async createOrganization({
+    orgName,
+    bio,
+    orgType,
+    orgCountry,
+    org_date_established,
+    profilephoto,
+    coverphoto,
+    branchName,
+    branchCountry,
+    region,
+    district,
+    street,
+    branch_date_established,
+    branchType,
+    email,
+  }: createOrgParam): Promise<
+    OrganizationResponseDto | ConflictException | string
+  > {
+    const orgExists = await this.prismaService.organization.findFirst({
+      where: {
+        name: orgName,
+      },
+    });
+
+    if (orgExists) {
+      return new ConflictException();
+    }
+
+    const org = await this.prismaService.organization.create({
+      data: {
+        name: orgName,
+        bio,
+        type: orgType,
+        country: orgCountry,
+        date_established: new Date(org_date_established).toISOString(),
+        profile_photo: profilephoto,
+        cover_photo: coverphoto,
+      },
+    });
+
+    let branch;
+
+    if (org) {
+      branch = await this.createOrganizationBranch(
+        {
+          branchName,
+          branchCountry,
+          region,
+          district,
+          street,
+          branch_date_established,
+          branchType,
+          email,
+        },
+        org.organization_id,
+      );
+    }
+
+    if (!branch) {
+      await this.prismaService.organization.delete({
+        where: {
+          organization_id: org.organization_id,
+        },
+      });
+      return 'request failed';
+    }
+    return new OrganizationResponseDto(org);
+  }
+"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function generateUserID(schoolCode, uniqueIdentifier) {
   // Get the current year
@@ -26,6 +126,9 @@ console.log(userID); // Output: ABCHS-23-002 (assuming the current year is 2023)
 //about the config module
 it helps us to use The environment variables
 built in nest module
+
+
+
 
 
 commands used to install passport do not include those, 

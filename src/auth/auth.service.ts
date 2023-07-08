@@ -150,16 +150,39 @@ async logout() {
 
 
 @Post('changepassword')     //auth/logout
-async changePassword() {
-  // You can perform any necessary operations here to invalidate the user's tokens
-  // For example, you can remove the tokens from the database or add them to a blacklist
-  // This depends on your specific implementation and requirements
+async changePassword( userId: string ,currentPassword: string, newPassword: string) {
+  const scisuser = await this.prisma.scisUser.findUnique({
+    where: {
+      scisuserid: userId,
+    },
+  });
 
-  // Return a response indicating a successful logout
-  return {
-    message: 'Logout successful',
-  };
+  const isPasswordValid = await argon.verify(
+    scisuser.password,
+    currentPassword,
+  );
+
+  if (!isPasswordValid) {
+    throw new ForbiddenException('Invalid current password');
+  }
+
+  // Encrypt the new password
+  const hashedNewPassword = await argon.hash(newPassword);
+
+  // Update the user's password with the new hashed password
+  await this.prisma.scisUser.update({
+    where: {
+      scisuserid: userId,
+    },
+    data: {
+      password: hashedNewPassword,
+    },
+  });
+
+  return { message: 'Password changed successfully' };
 }
 
+
+// one time password OTP, for forget password
 
 }

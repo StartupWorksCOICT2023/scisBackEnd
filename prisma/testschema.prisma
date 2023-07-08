@@ -162,6 +162,7 @@ model UserProfile {
   lastName     String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  //secondname
   //dob
   //phone1? (why optional is if its a student)
   //phone2?
@@ -169,6 +170,13 @@ model UserProfile {
   //religion
   //classes [], if a student has one class if a teacher has many
   //occupation 
+  //email
+  //address
+  //district
+  //region
+  //country
+  //profilePicture
+  //isActive
 
   // Relations
   user         scisUser      @relation(fields: [userId], references: [id])

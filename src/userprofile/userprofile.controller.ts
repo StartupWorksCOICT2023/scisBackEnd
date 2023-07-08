@@ -25,8 +25,7 @@ export class UserprofileController {
     return this.UserProfileService.getUserprofileById(scisid);
   }
 
-
-  @Post()
+  @Post(':id')
   createUserprofiles(
     @Param('id') scisid: string,
     @Body() dto: CreateUserprofileDto
@@ -35,7 +34,6 @@ export class UserprofileController {
       scisid,
       dto
     )
-
   }
 
   @Patch(':id')

@@ -17,6 +17,33 @@ model School {
   teachers  Teacher[]
 }
 
+model UserProfile {
+  id             Int      @id @default(autoincrement())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  firstName      String
+  lastName       String?
+  userId         String   @unique
+  secondname     String?
+  dob            String?
+  phone1         String
+  phone2         String?
+  gender         String?
+  religion       String?
+  email          String?
+  occupation     String?
+  address        String?
+  district       String?
+  region         String?
+  country        String?
+  profilePicture String?
+  isActive       String?
+  student        Student[] @relation("Studentsprofile")
+  parent         Parent[]  @relation("parentsprofile")
+  teacher        Teacher[] @relation("Teachersprofile")
+  user           scisUser? @relation("UserProfileToScisUser", fields: [userId], references: [scisuserid])
+}
+
 model scisUser {
   id          Int          @id @default(autoincrement())
   password    String
@@ -27,9 +54,10 @@ model scisUser {
   students    Student[]
   teachers    Teacher[]
   tokens      Token[]      @relation("UserTokens")
-  userProfile UserProfile?
+  userProfile UserProfile? @relation("UserProfileToScisUser")
   roles       Role[]       @relation("RoleToscisUser")
 }
+
 
 model Role {
   id        Int        @id @default(autoincrement())
@@ -59,6 +87,8 @@ model Teacher {
   subjects  Subject[]
   school    School    @relation(fields: [schoolId], references: [id])
   user      scisUser? @relation(fields: [userId], references: [id])
+  profile        UserProfile[]        @relation("Teachersprofile")
+
 }
 
 model ClassLevel {
@@ -79,6 +109,7 @@ model Subject {
   teacher     Teacher      @relation(fields: [teacherId], references: [id])
   tests       Test[]
   classLevels ClassLevel[] @relation("ClassLevelSubjects")
+
 }
 
 model Test {
@@ -100,6 +131,7 @@ model StudentResults {
   updatedAt     DateTime @updatedAt
   student       Student  @relation(fields: [studentId], references: [id])
   test          Test     @relation(fields: [testId], references: [id])
+  
 }
 
 model Student {
@@ -114,6 +146,7 @@ model Student {
   user           scisUser?        @relation(fields: [userId], references: [id])
   studentResults StudentResults[]
   classLevels    ClassLevel[]     @relation("ClassLevelStudents")
+  profile        UserProfile[]        @relation("Studentsprofile")
 }
 
 model Parent {
@@ -125,14 +158,8 @@ model Parent {
   studentId Int
   student   Student   @relation(fields: [studentId], references: [id])
   user      scisUser? @relation(fields: [userId], references: [id])
+  profile        UserProfile[]        @relation("parentsprofile")
 }
 
-model UserProfile {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  firstName String?
-  lastName  String?
-  userId    Int      @unique
-  user      scisUser @relation(fields: [userId], references: [id])
-}
+
+
