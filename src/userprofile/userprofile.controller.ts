@@ -18,6 +18,7 @@ export class UserprofileController {
   }
 
   // there is an issue here
+  // we need to consider roles when we are using some of these endpoints
   @Get(':id')
   getUserProfileById(
     @Param('id') scisid: string,

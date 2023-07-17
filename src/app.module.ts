@@ -5,6 +5,10 @@ import { ConfigModule } from '@nestjs/config';
 import {UserProfileModule} from './userprofile/userprofile.module'
 import { UserprofileController } from './userprofile/userprofile.controller';
 import { UserProfileService } from './userprofile/userprofile.service'
+// import { CatsService } from './cats/cats.service';
+// import { GardebookService } from './gardebook/gardebook.service';
+import { GradebookService } from './gradebook/gradebook.service';
+import { GradebookController } from './gradebook/gradebook.controller';
 
 @Module({
   imports: [
@@ -15,7 +19,7 @@ import { UserProfileService } from './userprofile/userprofile.service'
       isGlobal: true,
     })
   ],
-  controllers: [UserprofileController],
-  providers: [UserProfileService],
+  controllers: [UserprofileController,GradebookController],
+  providers: [UserProfileService, GradebookService],
 })
 export class AppModule {}
