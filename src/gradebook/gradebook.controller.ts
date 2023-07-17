@@ -3,7 +3,7 @@ import { JwtGuard } from 'src/auth/guard';
 // import services
 // import dto
 import { GetUserprofile } from '../auth/decorator';
-import { createSubjectDto, createTestDto, editSubjectDto, editTestDto } from './dto';
+import { createSubjectDto, createTestDto, createstudentResultDto, editSubjectDto, editTestDto, updateStudentResultDto } from './dto';
 import { GradebookService } from './gradebook.service';
 
 @UseGuards(JwtGuard)
@@ -94,6 +94,44 @@ deleteSubjectById(
     return this.GradebookService.deleteSubject(subjectId)
 }
 
+
+// StudentResult Endpoints:
+@Post('studentResults')
+createstudentResult(
+  @Body() dto: createstudentResultDto
+){
+  return this.GradebookService.createStudentResult(dto)
+}
+
+@Get('studentResults/student/:studentId')
+getstudentResultsbyStudentId(
+  @Param('studentId') studentId: string
+){
+  return this.GradebookService.getStudentResultByStudentId(studentId)
+}
+
+@Get('studentResults/test/:testId')
+getstudentResultsbyTestId(
+  @Param('testId') testId: string
+){
+  return this.GradebookService.getStudentResultByTestId(testId)
+}
+
+@Patch('studentResults')
+updateStudentResults(
+  @Body() dto: updateStudentResultDto
+)  {
+  return this.GradebookService.updateStudentResult(dto)
+}
+
+@Delete('studentResults')
+deleteSubject(
+  @Body() dto: createstudentResultDto
+){
+  return this.GradebookService.deleteStudentResult(dto)
+}
+
+
   
 }
 
@@ -102,12 +140,7 @@ deleteSubjectById(
 
 
 
-// StudentResult Endpoints:
 
-// Create StudentResult: POST /student-results
-// Get StudentResult by ID: GET /student-results/{resultId}
-// Update StudentResult: PUT /student-results/{resultId}
-// Delete StudentResult: DELETE /student-results/{resultId}
 // ClassLevel Endpoints:
 
 // Create ClassLevel: POST /class-levels
