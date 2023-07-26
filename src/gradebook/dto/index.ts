@@ -4,3 +4,7 @@ export * from './editSubject.dto';
 export * from './createSubject.dto';
 export * from './createStudentResult.dto';
 export * from './updateStudentResult.dto';
+export * from './createStudent.dto';
+export * from './editStudent.dto';
+export * from './createClass.dto';
+export * from './editClass.dto';

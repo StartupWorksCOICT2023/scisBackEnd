@@ -91,12 +91,17 @@ model Teacher {
 }
 
 model ClassLevel {
-  id        Int       @id @default(autoincrement())
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  students  Student[] @relation("ClassLevelStudents")
-  subjects  Subject[] @relation("ClassLevelSubjects")
+  id               Int       @id @default(autoincrement())
+  classId          String    @unique
+  year             String
+  level            String?
+  class            String
+  combination      String?
+  stream           String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  students         Student[] @relation("ClassLevelStudents")
+  subjects         Subject[] @relation("ClassLevelSubjects")
 }
 
 model Subject {
@@ -152,17 +157,17 @@ model StudentResults {
 }
 
 model Student {
-  id             Int              @id @default(autoincrement())
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  studentUserId  String              @unique
-  schoolId       Int
-  parents        Parent[]
-  school         School           @relation(fields: [schoolId], references: [id])
-  user           scisUser?        @relation(fields: [studentUserId], references: [scisuserid])
-  studentResults StudentResults[]
-  classLevels    ClassLevel[]     @relation("ClassLevelStudents")
-  profile        UserProfile[]    @relation("Studentsprofile")
+  id               Int              @id @default(autoincrement())
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  studentUserId    String           @unique
+  studentsschoolId String
+  parents          Parent[]
+  school           School           @relation(fields: [studentsschoolId], references: [schoolId])
+  user             scisUser?        @relation(fields: [studentUserId], references: [scisuserid])
+  studentResults   StudentResults[]
+  classLevels      ClassLevel[]     @relation("ClassLevelStudents")
+  profile          UserProfile[]    @relation("Studentsprofile")
 }
 
 model Parent {
@@ -170,9 +175,9 @@ model Parent {
   name      String
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
-  userId    Int?
-  studentId Int
-  student   Student       @relation(fields: [studentId], references: [id])
-  user      scisUser?     @relation(fields: [userId], references: [id])
+  userId    String?       @unique
+  studentId String
+  student   Student?      @relation(fields: [studentId], references: [studentUserId])
+  user      scisUser?     @relation(fields: [userId], references: [scisuserid])
   profile   UserProfile[] @relation("parentsprofile")
 }

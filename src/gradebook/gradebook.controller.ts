@@ -3,7 +3,7 @@ import { JwtGuard } from 'src/auth/guard';
 // import services
 // import dto
 import { GetUserprofile } from '../auth/decorator';
-import { createSubjectDto, createTestDto, createstudentResultDto, editSubjectDto, editTestDto, updateStudentResultDto } from './dto';
+import { createSubjectDto, createTestDto, createclassDto, createstudentDto, createstudentResultDto, editSubjectDto, editTestDto, editclassDto, editstudentDto, updateStudentResultDto } from './dto';
 import { GradebookService } from './gradebook.service';
 
 @UseGuards(JwtGuard)
@@ -14,6 +14,8 @@ export class GradebookController {
     private GradebookService: GradebookService,
   ) { }
 
+
+
   // Test Endpoints:
 
   @Get('test')
@@ -21,7 +23,6 @@ export class GradebookController {
     return this.GradebookService.getAllTest()
   }
 
-  
   @Post('test')
   createTests(
     @Body() dto: createTestDto
@@ -38,128 +39,184 @@ export class GradebookController {
 
   @Patch('test/:id')
   updateTestDetails(
-    @Body () dto: editTestDto,
+    @Body() dto: editTestDto,
     @Param('id') testId: string
-  ){
+  ) {
     return this.GradebookService.updateTest(dto, testId)
   }
-
 
   @Delete('test/:id')
   deleteTest(
     @Param('id') testId: string
-  ){
+  ) {
     return this.GradebookService.deleteTest(testId)
   }
 
 
 
+  
 
 
   // Subject Endpoints:
 
-@Post('subjects')
-createSubject(
-  @Body() dto: createSubjectDto 
-){
+  @Post('subjects')
+  createSubject(
+    @Body() dto: createSubjectDto
+  ) {
     return this.GradebookService.createSubject(
       dto
     )
-}
+  }
 
-@Get('subjects')
-getAllSubjects(){
+  @Get('subjects')
+  getAllSubjects() {
     return this.GradebookService.getAllSubjects()
-}
+  }
 
-@Get('subjects/:subjectId')
-getSubjectById(
-  @Param('subjectId') subjectId: string
-){
+  @Get('subjects/:subjectId')
+  getSubjectById(
+    @Param('subjectId') subjectId: string
+  ) {
     return this.GradebookService.getSubjectById(subjectId)
-}
+  }
 
-@Patch('subjects/:subjectId')
-updateSubjectById(
-  @Param('subjectId') subjectId: string,
-  @Body () dto: editSubjectDto
-){
+  @Patch('subjects/:subjectId')
+  updateSubjectById(
+    @Param('subjectId') subjectId: string,
+    @Body() dto: editSubjectDto
+  ) {
     return this.GradebookService.updateSubject(subjectId, dto)
-}
+  }
 
-@Delete('subjects/:subjectId')
-deleteSubjectById(
-  @Param('subjectId') subjectId: string
-){
+  @Delete('subjects/:subjectId')
+  deleteSubjectById(
+    @Param('subjectId') subjectId: string
+  ) {
     return this.GradebookService.deleteSubject(subjectId)
+  }
+
+
+
+
+  // StudentResult Endpoints:
+
+  @Post('studentResults')
+  createstudentResult(
+    @Body() dto: createstudentResultDto
+  ) {
+    return this.GradebookService.createStudentResult(dto)
+  }
+
+  @Get('studentResults/student/:studentId')
+  getstudentResultsbyStudentId(
+    @Param('studentId') studentId: string
+  ) {
+    return this.GradebookService.getStudentResultByStudentId(studentId)
+  }
+
+  @Get('studentResults/test/:testId')
+  getstudentResultsbyTestId(
+    @Param('testId') testId: string
+  ) {
+    return this.GradebookService.getStudentResultByTestId(testId)
+  }
+
+  @Patch('studentResults')
+  updateStudentResults(
+    @Body() dto: updateStudentResultDto
+  ) {
+    return this.GradebookService.updateStudentResult(dto)
+  }
+
+  @Delete('studentResults')
+  deleteSubject(
+    @Body() dto: createstudentResultDto
+  ) {
+    return this.GradebookService.deleteStudentResult(dto)
+  }
+
+
+
+
+
+  // Student ednpoints:
+
+  @Post('student')
+  createStudent(
+    @Body() dto: createstudentDto
+  ) {
+    return this.GradebookService.createStudent(dto)
+  }
+
+
+  @Get('student/:studentId')
+  getStudentById(
+    @Param('studentId') studentId: string
+  ) {
+    return this.GradebookService.getStudentById(studentId)
+  }
+
+  // this is crap
+  @Patch('student')
+  editStudentById(
+    @Body() dto: editstudentDto
+  ) {
+    return this.GradebookService.updateStudent(dto)
+  }
+
+
+  @Delete('student/:studentId')
+  deleteStudentById(
+    @Param('studentId') studentId: string
+  ) {
+    return this.GradebookService.deleteStudent(studentId)
+  }
+
+
+
+
+
+  // ClassLevel Endpoints:
+
+  @Post('classlevel')
+  createClassLevel(
+    @Body() dto: createclassDto
+  ) {
+    return this.GradebookService.createClassLevel(dto)
+  }
+
+  @Get('classlevel/:classLevelId')
+  getClassLevelById(
+    @Param('classLevelId') classLevelId: string
+  ) {
+    return this.GradebookService.getClassLevelById(classLevelId)
+  }
+
+  @Patch('classlevel/:classLevelId')
+  updateClassLevel(
+    @Param('classLevelId') classLevelId: string,
+    @Body() dto: editclassDto
+  ) {
+    return this.GradebookService.updateClassLevel(dto, classLevelId)
+  }
+
+  @Delete('classlevel/:classLevelId')
+  deleteClassLevel(
+    @Param('classLevelId') classLevelId: string,
+  ) {
+    return this.GradebookService.deleteClassLevel(classLevelId)
+  }
+
+
+
 }
 
 
-// StudentResult Endpoints:
-@Post('studentResults')
-createstudentResult(
-  @Body() dto: createstudentResultDto
-){
-  return this.GradebookService.createStudentResult(dto)
-}
-
-@Get('studentResults/student/:studentId')
-getstudentResultsbyStudentId(
-  @Param('studentId') studentId: string
-){
-  return this.GradebookService.getStudentResultByStudentId(studentId)
-}
-
-@Get('studentResults/test/:testId')
-getstudentResultsbyTestId(
-  @Param('testId') testId: string
-){
-  return this.GradebookService.getStudentResultByTestId(testId)
-}
-
-@Patch('studentResults')
-updateStudentResults(
-  @Body() dto: updateStudentResultDto
-)  {
-  return this.GradebookService.updateStudentResult(dto)
-}
-
-@Delete('studentResults')
-deleteSubject(
-  @Body() dto: createstudentResultDto
-){
-  return this.GradebookService.deleteStudentResult(dto)
-}
-
-
-  
-}
 
 
 
-
-
-
-
-// ClassLevel Endpoints:
-
-// Create ClassLevel: POST /class-levels
-// Get ClassLevel by ID: GET /class-levels/{classLevelId}
-// Update ClassLevel: PUT /class-levels/{classLevelId}
-// Delete ClassLevel: DELETE /class-levels/{classLevelId}
-// Student Endpoints:
-
-
-
+// Grade Endpoints:
 // Create Grade: POST /grades
 // Get Grade by ID: GET /grades/{gradeId}
 // Update Grade: PUT /grades/{gradeId}
 // Delete Grade: DELETE /grades/{gradeId}
-
-
-
-// Create Student: POST /students
-// Get Student by ID: GET /students/{studentId}
-// Update Student: PUT /students/{studentId}
-// Delete Student: DELETE /students/{studentId}
-// Grade Endpoints:

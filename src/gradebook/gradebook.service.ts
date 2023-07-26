@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { createSubjectDto, createTestDto, createstudentResultDto, editSubjectDto, editTestDto, updateStudentResultDto } from './dto';
+import { createSubjectDto, createTestDto, createclassDto, createstudentDto, createstudentResultDto, editSubjectDto, editTestDto, editclassDto, editstudentDto, updateStudentResultDto } from './dto';
 import { NotFoundException } from '@nestjs/common';
 import { test } from 'node:test';
 
@@ -222,7 +222,7 @@ export class GradebookService {
     }
 
 
-    
+
     // StudentResult Endpoints
 
     async createStudentResult(dto: createstudentResultDto) {
@@ -273,7 +273,7 @@ export class GradebookService {
         }
     }
 
-    async getStudentResultByTestId(testId: string){
+    async getStudentResultByTestId(testId: string) {
         try {
             const studentResultsByTestId = await this.prisma.studentResults.findMany({
                 where: {
@@ -347,27 +347,231 @@ export class GradebookService {
     }
 
 
+    // Student Endpoints
+
+    async createStudent(dto: createstudentDto) {
+        // TODO: Implement createStudent method
+        const StudentCreatedAlready = await this.prisma.student.findFirst({
+            where: {
+                studentUserId: dto.scisuserId
+            }
+        })
+
+        if (StudentCreatedAlready) {
+            throw new Error('"this student is present, or please confirm the userID of the student"')
+        }
+
+        if (!StudentCreatedAlready) {
+
+
+            // WHILE CREATING A PARENT THEN WE ADD STUDENTS TO HIM, NOT THAT WHEN WE CREATE A ASTUDENT WE ASSIGN HIM/HER TO A PARENT DIRECTLY
+
+            // A TEACHER SHOULD CREATE A CLASS WITH HIS ALL STUDENTS 
+
+            const createStudent = await this.prisma.student.create({
+                data: {
+                    studentUserId: dto.scisuserId,
+                    studentsschoolId: dto.schoolId,
+                }
+            })
+
+            if (createStudent) {
+                return "created student successfully"
+            }
+        }
+    }
+
+    async getStudentById(studentId: string) {
+
+        try {
+            const studentById = await this.prisma.student.findFirst({
+                where: {
+                    studentUserId: studentId,
+                },
+            });
+
+            return studentById;
+        } catch (error) {
+            // Handle the error appropriately
+            console.error(`Error retrieving student for studentId: ${studentId}`, error);
+            throw new Error(`Failed to retrieve student for studentId: ${studentId}`);
+        }
+    }
+
+    async updateStudent(dto: editstudentDto) {
+
+        // YOU CAN ONLY CHANGE SCHOOLS NOW
+
+        const isStudentExist = await this.prisma.student.findFirst({
+            where: {
+                studentUserId: dto.oldscisuserId
+            }
+        })
+
+        if (!isStudentExist) {
+            throw new Error('"this Student is not present"')
+            // return "this result is present, please confirm or edit arleady present entry"
+        }
+
+        const updateStudent = await this.prisma.student.updateMany({
+            where: {
+                studentUserId: dto.oldscisuserId
+            },
+            data: {
+                studentUserId: dto.newscisuserId,
+                studentsschoolId: dto.schoolId
+            },
+        });
+
+        if (updateStudent) {
+            return `Successfully updated a student with student ID ${dto.oldscisuserId} to a new student ID ${dto.newscisuserId} with school id ${dto.schoolId}`;
+        }
+
+    }
+
+    async deleteStudent(studentId: string) {
+
+        const StudentExists = await this.prisma.student.findFirst({
+            where: {
+                studentUserId: studentId,
+            },
+        });
+
+        if (!StudentExists) {
+            throw new Error('This student is not present. Please confirm or edit the student Id ');
+        }
+
+        const deletedStudent = await this.prisma.student.delete({
+            where: {
+                studentUserId: studentId
+            },
+        });
+
+        if (deletedStudent) {
+            return `Successfully deleted ${deletedStudent}`;
+        }
+
+    }
 
 
     // ClassLevel Endpoints
+    // they are used to group students together so that when a teacher is registering his subject he can choose classes which study it. classes should be created by admin
 
-    async createClassLevel() {
-        // TODO: Implement createClassLevel method
+    // for optional subject custom classes should be created
+
+    // or
+    // we should add a class with the, the subjects. but each subject should be optional or not 
+
+    async createClassLevel(dto: createclassDto) {
+
+        const classExists = await this.prisma.classLevel.findFirst({
+            where: {
+                year: dto.year,
+                class: dto.class,
+                combination: dto.combination,
+                stream: dto.stream
+            }
+        })
+
+        if (classExists) {
+            throw new Error('"this class arleady exitst"')
+        }
+
+        if (!classExists) {
+
+            const createnewClass = await this.prisma.classLevel.create({
+                data: {
+                    classId: `${dto.year}-${dto.class}-${dto.combination}-${dto.stream}`,
+                    year: dto.year,
+                    class: dto.class,
+                    combination: dto.combination,
+                    stream: dto.stream,
+                    level: dto.level
+                }
+            })
+
+            if (createnewClass) {
+                return 'new class create succesfully'
+            }
+        }
     }
 
-    async getClassLevelById(classLevelId: number) {
-        // TODO: Implement getClassLevelById method
+    async getClassLevelById(classLevelId: string) {
+
+        try {
+            const getclassById = await this.prisma.classLevel.findFirst({
+                where: {
+                    classId: classLevelId,
+                },
+                include: {
+                    students: true,
+                    subjects: true
+                }
+            });
+
+            return getclassById;
+        } catch (error) {
+            // Handle the error appropriately
+            console.error(`Error retrieving class details for class Id: ${classLevelId}`, error);
+            throw new Error(`Failed to retrieve class details for class Id: ${classLevelId}`);
+        }
+
     }
 
-    async updateClassLevel(classLevelId: number) {
-        // TODO: Implement updateClassLevel method
+    async updateClassLevel(dto: editclassDto, classLevelId: string) {
+
+        const classExists = await this.prisma.classLevel.findFirst({
+            where: {
+                classId: classLevelId
+            }
+        })
+
+        if (!classExists) {
+            throw new Error('"this class does not exitst"')
+        }
+
+        const updateClassLevel = await this.prisma.classLevel.update({
+            where: {
+                // the old classlevel id is passed via teh url
+                classId: classLevelId
+            },
+            data: {
+                classId: `${dto.year}-${dto.class}-${dto.combination}-${dto.stream}`,
+                year: dto.year,
+                class: dto.class,
+                combination: dto.combination,
+                stream: dto.stream,
+                level: dto.level
+            }
+        })
+
+        if (updateClassLevel) {
+            return `successfully updated a class, ${updateClassLevel}`
+        }
+
     }
 
-    async deleteClassLevel(classLevelId: number) {
-        // TODO: Implement deleteClassLevel method
+    async deleteClassLevel(classLevelId: string) {
+        const classExists = await this.prisma.classLevel.findFirst({
+            where: {
+                classId: classLevelId
+            }
+        })
+
+        if (!classExists) {
+            throw new Error('"this class does not exitst"')
+        }
+
+        const deleteClass = await this.prisma.classLevel.delete({
+            where: {
+                classId: classLevelId
+            }
+        })
+
+        if (deleteClass) {
+            return `successfuly deleted class ${deleteClass} `
+        }
     }
-
-
 
 
 
@@ -388,29 +592,5 @@ export class GradebookService {
     async deleteGrade(gradeId: number) {
         // TODO: Implement deleteGrade method
     }
-
-
-
-
-
-    // Student Endpoints
-
-    async createStudent() {
-        // TODO: Implement createStudent method
-    }
-
-    async getStudentById(studentId: number) {
-        // TODO: Implement getStudentById method
-    }
-
-    async updateStudent(studentId: number) {
-        // TODO: Implement updateStudent method
-    }
-
-    async deleteStudent(studentId: number) {
-        // TODO: Implement deleteStudent method
-    }
-
-
 
 }
