@@ -102,7 +102,9 @@ model ClassLevel {
   updatedAt        DateTime  @updatedAt
   students         Student[] @relation("ClassLevelStudents")
   subjects         Subject[] @relation("ClassLevelSubjects")
+  tests            Test[]    @relation("ClassLevelTests") // Added this line to establish the one-to-many relationship with Test
 }
+
 
 model Subject {
   id          Int          @id @default(autoincrement())
@@ -118,14 +120,22 @@ model Subject {
 model Test {
   id             Int              @id @default(autoincrement())
   testId         String           @unique
-  name           String //ASS1 ASS2 QUIZ1 MIDTERMMARCH MIDTERMSEPT ANNUAL
-  //test type i.e Assignment quiz midterm so that they can be filtered with ease for calculations
+  ExamType       String           // ASS1, ASS2, QUIZ1, MIDTERMMARCH, MIDTERMSEPT, ANNUAL, etc.
+  ExamClassLevel  String?
+  TotalMarks      String
+  ExamDate        String?
+  ExamStartTime   String?
+  ExamDuration    String?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   subjectId      String
   studentResults StudentResults[]
-  subject        Subject          @relation(fields: [subjectId], references: [subjectId])
+
+  subject   Subject   @relation(fields: [subjectId], references: [subjectId])
+  classLevel ClassLevel? @relation("ClassLevelTests", fields: [ExamClassLevel], references: [classId])
 }
+
+
 
 //grades table type i.e necta o-level ,a-level ,primary grades,  that is pulled so that grading can be done 
 

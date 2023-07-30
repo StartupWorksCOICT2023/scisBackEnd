@@ -5,46 +5,41 @@ import { NotFoundException } from '@nestjs/common';
 import { test } from 'node:test';
 
 
+
 @Injectable()
 export class GradebookService {
 
     constructor(private prisma: PrismaService) { }
 
-    // Test Endpoints
     async getAllTest() {
-        const allTests = await this.prisma.test.findMany({
-            select: {
-                name: true,
-                subjectId: true,
-            },
-        });
+        const allTests = await this.prisma.test.findMany();
         return allTests;
     }
 
     async createTest(dto: createTestDto) {
-        // TODO: Implement createTest method
         const testExists = await this.prisma.test.findFirst({
             where: {
-                // what do we compare tests with
-                testId: dto.testId
-            }
-        })
+                testId: dto.testId,
+            },
+        });
 
         if (testExists) {
-            return "This test arleady exists";
+            throw new Error('This test already exists');
         }
 
         const testCreated = await this.prisma.test.create({
             data: {
                 testId: dto.testId,
-                name: dto.testName,
-                subject: {
-                    connect: { subjectId: dto.subjectId } // Update this line
-                }
+                TotalMarks: dto.TotalMarks,
+                ExamClassLevel: dto.ExamClassLevel,
+                ExamType: dto.ExamType,
+                subjectId: dto.subjectId,
+                ExamDate: dto.ExamDate,
+                ExamStartTime: dto.ExamStartTime,
+                ExamDuration: dto.ExamDuration,
             },
         });
 
-        // Handle the created test, return it, or perform any additional operations
         return testCreated;
     }
 
@@ -56,8 +51,7 @@ export class GradebookService {
         });
 
         if (!test) {
-            return "This test does not exists";
-
+            return null; // Return null when the test doesn't exist
         }
 
         return test;
@@ -71,7 +65,7 @@ export class GradebookService {
         });
 
         if (!test) {
-            return "This test does not exists";
+            throw new Error('This test does not exist');
         }
 
         const updatedTest = await this.prisma.test.update({
@@ -79,9 +73,14 @@ export class GradebookService {
                 testId: passedtestId,
             },
             data: {
-                name: dto.testName,
                 subjectId: dto.subjectId,
-                // Include other fields to be updated from the updateTestDto
+                ExamClassLevel: dto.ExamClassLevel,
+                ExamType: dto.ExamType,
+                TotalMarks: dto.TotalMarks,
+                ExamDate: dto.ExamDate,
+                ExamStartTime: dto.ExamStartTime,
+                ExamDuration: dto.ExamDuration,
+                // Include other fields to be updated from the editTestDto
             },
         });
 
@@ -96,7 +95,7 @@ export class GradebookService {
         });
 
         if (!test) {
-            return "cannot delete, This test does not exists";
+            throw new Error('Cannot delete, this test does not exist');
         }
 
         const deletedTest = await this.prisma.test.delete({
@@ -107,6 +106,10 @@ export class GradebookService {
 
         return deletedTest;
     }
+
+
+
+
 
 
 
@@ -248,13 +251,15 @@ export class GradebookService {
             },
         });
 
-
         if (createResult) {
             return "created result succesffully"
         }
 
 
+    }
 
+    async uploadResultsbyExcelFiles() {
+        //TO DO: write all the neccessary code
     }
 
     async getStudentResultByStudentId(studentId: string) {
@@ -517,6 +522,66 @@ export class GradebookService {
         }
 
     }
+
+    async getClassLevelsOfCurrentYear() {
+
+        // Get the current date
+        const currentDate = new Date();
+
+        // Extract the current year from the date   
+        const currentYear = currentDate.getFullYear().toString();
+
+        console.log(currentYear); // Output the current year    
+
+        try {
+            const getclassById = await this.prisma.classLevel.findMany({
+                where: {
+                    year: currentYear,
+                },
+                //WITH ALL THIS DATA OUR SITE COULD BE WITH TOOMUCH DATA FLOW UNNECCESSARILY
+                // include: {
+                //     students: true,
+                //     subjects: true,
+                // }
+            });
+
+            return getclassById;
+
+        } catch (error) {
+            // Handle the error appropriately
+            console.error(`Error retrieving classes details for Year: ${currentYear}`, error);
+            throw new Error(`Failed to retrieve classes details for class Id: ${currentYear}`);
+        }
+
+    }
+
+    async getClassLevelsByYear(Year: string) {
+        console.log(Year)
+
+        try {
+            const getclassById = await this.prisma.classLevel.findMany({
+                where: {
+                    year: Year,
+                },
+                //WITH ALL THIS DATA OUR SITE COULD BE WITH TOOMUCH DATA FLOW UNNECCESSARILY
+                // include: {
+                //     students: true,
+                //     subjects: true,
+                // }
+            });
+
+            return getclassById;
+        } catch (error) {
+            // Handle the error appropriately
+            console.error(`Error retrieving classes details for Year: ${Year}`, error);
+            throw new Error(`Failed to retrieve classes details for class Id: ${Year}`);
+        }
+
+    }
+
+
+
+
 
     async updateClassLevel(dto: editclassDto, classLevelId: string) {
 

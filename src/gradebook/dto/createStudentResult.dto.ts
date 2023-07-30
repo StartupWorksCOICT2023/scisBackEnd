@@ -13,5 +13,4 @@ export class createstudentResultDto{
     @IsNotEmpty()
     @IsString()
     studentId : string
-    
 }

@@ -54,7 +54,7 @@ export class GradebookController {
 
 
 
-  
+
 
 
   // Subject Endpoints:
@@ -96,8 +96,6 @@ export class GradebookController {
   }
 
 
-
-
   // StudentResult Endpoints:
 
   @Post('studentResults')
@@ -106,6 +104,48 @@ export class GradebookController {
   ) {
     return this.GradebookService.createStudentResult(dto)
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @Post('uploadStudentResults')
+  uploadStudentResults() {
+    return this.GradebookService.uploadResultsbyExcelFiles()
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   @Get('studentResults/student/:studentId')
   getstudentResultsbyStudentId(
@@ -134,7 +174,6 @@ export class GradebookController {
   ) {
     return this.GradebookService.deleteStudentResult(dto)
   }
-
 
 
 
@@ -190,6 +229,21 @@ export class GradebookController {
     @Param('classLevelId') classLevelId: string
   ) {
     return this.GradebookService.getClassLevelById(classLevelId)
+  }
+
+  @Get('classlevel/currentyear')
+  getClassLevelsOfCurrentYear(
+  ) {
+    return this.GradebookService.getClassLevelsOfCurrentYear()
+  }
+
+
+
+  @Get('classlevel/year/:year')
+  getClassLevelsByYear(
+    @Param('year') year: string
+  ) {
+    return this.GradebookService.getClassLevelsByYear(year)
   }
 
   @Patch('classlevel/:classLevelId')

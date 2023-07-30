@@ -1,15 +1,35 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 export class editTestDto {
+    @IsNotEmpty()
+    @IsString()
+    ExamType: string
+
+    @IsString()
+    @IsOptional() // Mark as optional
+    ExamClassLevel?: string
+
     @IsOptional()
     @IsString()
-    testName: string
+    TotalMarks: string
+
+    @IsOptional()
+    @IsString()
+    subjectId: string
 
     @IsNotEmpty()
     @IsString()
     testId: string
 
-    @IsOptional()
     @IsString()
-    subjectId: string
+    @IsOptional()
+    ExamDate?:        string
+
+    @IsString()
+    @IsOptional()
+    ExamStartTime?:   string
+
+    @IsString()
+    @IsOptional()
+    ExamDuration?:    string
 } 
