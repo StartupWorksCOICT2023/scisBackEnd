@@ -3,7 +3,7 @@ import { JwtGuard } from 'src/auth/guard';
 // import services
 // import dto
 import { GetUserprofile } from '../auth/decorator';
-import { createSubjectDto, createTestDto, createclassDto, createstudentDto, createstudentResultDto, editSubjectDto, editTestDto, editclassDto, editstudentDto, updateStudentResultDto } from './dto';
+import { createSubjectDto, createTestDto, createclassDto, createstudentDto, createstudentResultDto, editSubjectDto, editTestDto, editclassDto, editstudentDto, updateBatchStudentResultDto, updateStudentResultDto } from './dto';
 import { GradebookService } from './gradebook.service';
 
 @UseGuards(JwtGuard)
@@ -166,6 +166,13 @@ export class GradebookController {
     @Body() dto: updateStudentResultDto
   ) {
     return this.GradebookService.updateStudentResult(dto)
+  }
+  
+  @Patch('studentResults/batch')
+  updateBatchStudentResults(
+    @Body() dtoList: updateBatchStudentResultDto[]
+  ) {
+    return this.GradebookService.updateBatchStudentResult(dtoList)
   }
 
   @Delete('studentResults')

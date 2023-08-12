@@ -16,6 +16,7 @@ model School {
   updatedAt DateTime  @updatedAt
   students  Student[]
   teachers  Teacher[]
+  userProfiles UserProfile[]
 }
 
 model UserProfile {
@@ -39,6 +40,8 @@ model UserProfile {
   country        String?
   profilePicture String?
   isActive       String?
+  schoolId       String?  
+  school         School?   @relation(fields: [schoolId], references: [schoolId])
   student        Student[] @relation("Studentsprofile")
   parent         Parent[]  @relation("parentsprofile")
   teacher        Teacher[] @relation("Teachersprofile")
@@ -51,20 +54,21 @@ model scisUser {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   scisuserid  String       @unique
+  roleId      String?
   parents     Parent[]
   students    Student[]
   teachers    Teacher[]
   tokens      Token[]      @relation("UserTokens")
   userProfile UserProfile? @relation("UserProfileToScisUser")
-  roles       Role[]       @relation("RoleToscisUser")
+  roles       Role?       @relation(fields: [roleId], references: [name])
 }
 
 model Role {
   id        Int        @id @default(autoincrement())
-  name      String
+  name      String     @unique
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  users     scisUser[] @relation("RoleToscisUser")
+  users     scisUser[] 
 }
 
 model Token {

@@ -7,6 +7,14 @@ export class CreateUserprofileDto{
 
   @IsNotEmpty()
   @IsString()
+  SchoolId : string
+
+  @IsNotEmpty()
+  @IsString()
+  roles : string
+
+  @IsNotEmpty()
+  @IsString()
   firstName : string
 
   @IsString()

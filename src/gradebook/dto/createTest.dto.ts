@@ -21,17 +21,17 @@ export class createTestDto {
     @IsString()
     testId: string
 
-    @IsString()
-    @IsOptional()
-    ExamDate?:        string
+    // @IsString()
+    // @IsOptional()
+    // ExamDate?:        string
 
-    @IsString()
-    @IsOptional()
-    ExamStartTime?:   string
+    // @IsString()
+    // @IsOptional()
+    // ExamStartTime?:   string
 
-    @IsString()
-    @IsOptional()
-    ExamDuration?:    string
+    // @IsString()
+    // @IsOptional()
+    // ExamDuration?:    string
 
 
     

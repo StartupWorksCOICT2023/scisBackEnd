@@ -80,8 +80,16 @@
                 },
                 include: {
                 userProfile: true,
+                students: true
                 },
             });
+
+            const createStudent = await this.prisma.student.create({
+                data: {
+                    studentUserId: scisid,
+                    studentsschoolId: dto.SchoolId,
+                }
+            })
         
             return userCreated.userProfile;
             }
