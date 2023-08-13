@@ -76,5 +76,9 @@ export class CreateUserprofileDto{
   @IsString()
   @IsOptional()
   isActive?: boolean;
+
+  @IsString()
+  @IsOptional()
+  userType?: string;
   
 }

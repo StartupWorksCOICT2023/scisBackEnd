@@ -58,6 +58,7 @@
                 data: {
                 scisuserid: scisid,
                 password: hash,
+                roleId: dto.userType,
                 userProfile: {
                     create: {
                     firstName: dto.firstName,
