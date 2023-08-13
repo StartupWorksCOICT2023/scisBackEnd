@@ -1,17 +1,17 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 export class CreateUserprofileDto{
-  @IsNotEmpty()
-  @IsString()
-  userId : string
+  // @IsNotEmpty()
+  // @IsString()
+  // userId : string
 
   @IsNotEmpty()
   @IsString()
   SchoolId : string
 
-  @IsNotEmpty()
-  @IsString()
-  roles : string
+  // @IsNotEmpty()
+  // @IsString()
+  // roles : string
 
   @IsNotEmpty()
   @IsString()

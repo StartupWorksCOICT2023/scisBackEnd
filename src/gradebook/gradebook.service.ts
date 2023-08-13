@@ -10,6 +10,21 @@ export class GradebookService {
 
     constructor(private prisma: PrismaService) { }
 
+
+    // School Ednpoints
+
+    async getAllSchool() {
+
+        const allSchools = await this.prisma.school.findMany();
+        return allSchools;
+
+    }
+
+
+
+
+    // Test Endpoints
+
     async getAllTest() {
         const allTests = await this.prisma.test.findMany();
         return allTests;
@@ -391,6 +406,26 @@ export class GradebookService {
 
 
     // Student Endpoints
+    async getAllStudents() {
+        
+        try {
+            const studentById = await this.prisma.scisUser.findMany({
+                where: {
+                    roleId: 'student',
+                }, include: {
+                    userProfile: true
+                }
+            });
+    
+            return studentById;
+
+        } catch (error) {
+            // Handle the error appropriately
+            console.error(`Error retrieving student for students, error`);
+            throw new Error(`Failed to retrieve students`);
+        }
+
+    }
 
     async createStudent(dto: createstudentDto) {
     // TODO: Implement createStudent method
@@ -671,6 +706,30 @@ export class GradebookService {
         return `successfuly deleted class ${deleteClass} `
     }
 }
+
+    // Teachers Endpoint
+
+    async getAllTeachers() {
+        
+        try {
+            const AllTeachers = await this.prisma.scisUser.findMany({
+                where: {
+                    roleId: 'teacher',
+                }, include: {
+                    userProfile: true
+                }
+            });
+    
+            return AllTeachers;
+
+        } catch (error) {
+            // Handle the error appropriately
+            console.error(`Error retrieving teachers, ${error}`);
+            throw new Error(`Failed to retrieve students`);
+        }
+
+    }
+
 
 
 

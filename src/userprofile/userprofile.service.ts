@@ -94,6 +94,75 @@
             return userCreated.userProfile;
             }
         }
+
+        async createStudentUserprofiles(scisid: string, dto: CreateUserprofileDto) {
+            console.log(scisid);
+            console.log(dto);
+        
+            // Find the user
+            const userExists = await this.prisma.scisUser.findFirst({
+            where: {
+                scisuserid: scisid,
+            },
+            });
+        
+            // If user exists or UserID is already in use, return an error
+            if (userExists) {
+            return "This user exists or userId is already in use";
+            }
+        
+            // If the user does not exist, create the new user and user profile
+            if (!userExists) {
+            // ENCRYPT the password first then send it 
+            const hash = await argon.hash(scisid);
+        
+            const userCreated = await this.prisma.scisUser.create({
+                data: {
+                scisuserid: scisid,
+                password: hash,
+                userProfile: {
+                    create: {
+                    firstName: dto.firstName,
+                    lastName: dto.lastName,
+                    secondname: dto.secondname,
+                    dob: dto.dob,
+                    phone1: dto.phone1,
+                    phone2: dto.gender,
+                    gender: dto.gender,
+                    religion: dto.religion,
+                    email: dto.email,
+                    occupation: dto.occupation,
+                    address: dto.address,
+                    district: dto.district,
+                    region: dto.region,
+                    country: dto.country,
+                    profilePicture: dto.profilePicture,
+                    },
+                },
+                },
+                include: {
+                userProfile: true,
+                students: true
+                },
+            });
+
+            const createStudent = await this.prisma.student.create({
+                data: {
+                    studentUserId: scisid,
+                    studentsschoolId: dto.SchoolId,
+                }
+            })
+        
+            
+            if(userCreated && createStudent){
+                console.log("Successfully created user and Student")
+            }
+            
+            return userCreated.userProfile;
+            
+            }
+
+        }
         
         async editUserprofileById(scisid: string, dto: EditUserprofileDto) {
             // Find the user profile by scisid

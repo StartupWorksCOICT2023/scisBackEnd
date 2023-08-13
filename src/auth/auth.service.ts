@@ -13,17 +13,20 @@ export class AuthService {
       ){}
     
    //creating an endpoint
+
    @Post('signin')
    async signin(dto: AuthDto) {
     const { scisuserid, password } = dto;
     // find the user by scisuserid
     const scisuser = await this.prisma.scisUser.findUnique({
       where: {
-        scisuserid: scisuserid,
+        scisuserid: scisuserid
       },
-      include: { roles: true },
+      include: { userProfile: true },
+      
     });
   
+    console.log(scisuser)
     // if user does not exist throw exception
     if (!scisuser)
       throw new ForbiddenException(

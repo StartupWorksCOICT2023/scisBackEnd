@@ -15,6 +15,12 @@ export class GradebookController {
   ) { }
 
 
+  //School Ednpoints:
+  @Get('schools')
+  getAllSchool(){
+    return this.GradebookService.getAllSchool()
+  }
+
 
   // Test Endpoints:
 
@@ -187,6 +193,12 @@ export class GradebookController {
 
   // Student ednpoints:
 
+  @Get('student')
+  getAllStudents() {
+    return this.GradebookService.getAllStudents()
+  }
+
+
   @Post('student')
   createStudent(
     @Body() dto: createstudentDto
@@ -218,6 +230,12 @@ export class GradebookController {
     return this.GradebookService.deleteStudent(studentId)
   }
 
+
+  // Teachers Endpoints
+  @Get('teacher')
+  getAllTeachers() {
+    return this.GradebookService.getAllTeachers()
+  }
 
 
 
