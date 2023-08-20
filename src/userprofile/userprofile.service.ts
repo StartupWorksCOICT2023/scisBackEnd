@@ -96,6 +96,7 @@
             }
         }
 
+        // this crete student user is not in use yet  is not yet in use
         async createStudentUserprofiles(scisid: string, dto: CreateUserprofileDto) {
             console.log(scisid);
             console.log(dto);
@@ -157,6 +158,148 @@
             
             if(userCreated && createStudent){
                 console.log("Successfully created user and Student")
+            }
+            
+            return userCreated.userProfile;
+            
+            }
+
+        }
+
+        async createParentUserprofiles(scisid: string, dto: CreateUserprofileDto) {
+            console.log(scisid);
+            console.log(dto);
+        
+            // Find the user
+            const userExists = await this.prisma.scisUser.findFirst({
+            where: {
+                scisuserid: scisid,
+            },
+            });
+        
+            // If user exists or UserID is already in use, return an error
+            if (userExists) {
+            return "This user exists or userId is already in use";
+            }
+        
+            // If the user does not exist, create the new user and user profile
+            if (!userExists) {
+            // ENCRYPT the password first then send it 
+            const hash = await argon.hash(scisid);
+        
+            const userCreated = await this.prisma.scisUser.create({
+                data: {
+                scisuserid: scisid,
+                password: hash,
+                roleId: dto.userType,
+                userProfile: {
+                    create: {
+                    firstName: dto.firstName,
+                    lastName: dto.lastName,
+                    secondname: dto.secondname,
+                    dob: dto.dob,
+                    phone1: dto.phone1,
+                    phone2: dto.gender,
+                    gender: dto.gender,
+                    religion: dto.religion,
+                    email: dto.email,
+                    occupation: dto.occupation,
+                    address: dto.address,
+                    district: dto.district,
+                    region: dto.region,
+                    country: dto.country,
+                    profilePicture: dto.profilePicture,
+                    },
+                },
+                },
+                include: {
+                userProfile: true,
+                students: true
+                },
+            });
+
+            const createParent = await this.prisma.parent.create({
+                data: {
+                    parentUserId : scisid,
+                    studentId: dto.studentId,
+                }
+            })
+        
+            
+            if(userCreated && createParent){
+                console.log("Successfully user and Parent and linked a student")
+            }
+            
+            return userCreated.userProfile;
+            
+            }
+
+        }
+
+        
+        async createTeacherUserprofiles(scisid: string, dto: CreateUserprofileDto) {
+            console.log(scisid);
+            console.log(dto);
+        
+            // Find the user
+            const userExists = await this.prisma.scisUser.findFirst({
+            where: {
+                scisuserid: scisid,
+            },
+            });
+        
+            // If user exists or UserID is already in use, return an error
+            if (userExists) {
+            return "This user exists or userId is already in use";
+            }
+        
+            // If the user does not exist, create the new user and user profile
+            if (!userExists) {
+            // ENCRYPT the password first then send it 
+            const hash = await argon.hash(scisid);
+        
+            const userCreated = await this.prisma.scisUser.create({
+                data: {
+                scisuserid: scisid,
+                password: hash,
+                roleId: dto.userType,
+                userProfile: {
+                    create: {
+                    firstName: dto.firstName,
+                    lastName: dto.lastName,
+                    secondname: dto.secondname,
+                    dob: dto.dob,
+                    phone1: dto.phone1,
+                    phone2: dto.gender,
+                    gender: dto.gender,
+                    religion: dto.religion,
+                    email: dto.email,
+                    occupation: dto.occupation,
+                    address: dto.address,
+                    district: dto.district,
+                    region: dto.region,
+                    country: dto.country,
+                    profilePicture: dto.profilePicture,
+                    },
+                },
+                },
+                include: {
+                userProfile: true,
+                students: true
+                },
+            });
+
+            // set subjects that a teacher teaches on creating
+            const createTeacher = await this.prisma.teacher.create({
+                data: {
+                    TeacheruserId: scisid,
+                    schoolId: dto.SchoolId,
+                }
+            })
+        
+            
+            if(userCreated && createTeacher){
+                console.log("Successfully user and Teacher and linked a student")
             }
             
             return userCreated.userProfile;

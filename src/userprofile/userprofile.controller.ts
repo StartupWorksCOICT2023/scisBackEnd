@@ -37,6 +37,28 @@ export class UserprofileController {
     )
   }
 
+  @Post('/parent/:id')
+  createParentUserprofiles(
+    @Param('id') scisid: string,
+    @Body() dto: CreateUserprofileDto
+  ) {
+    return this.UserProfileService.createParentUserprofiles(
+      scisid,
+      dto
+    )
+  }
+
+  @Post('/teacher/:id')
+  createTeacherUserprofiles(
+    @Param('id') scisid: string,
+    @Body() dto: CreateUserprofileDto
+  ) {
+    return this.UserProfileService.createTeacherUserprofiles(
+      scisid,
+      dto
+    )
+  }
+
   @Patch(':id')
   editUserprofileById(
     @Param('id') scisid: string,

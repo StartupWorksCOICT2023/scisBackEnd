@@ -8,14 +8,14 @@ datasource db {
 }
 
 model School {
-  id        Int       @id @default(autoincrement())
-  schoolId  String    @unique
-  name      String
-  address   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  students  Student[]
-  teachers  Teacher[]
+  id           Int           @id @default(autoincrement())
+  schoolId     String        @unique
+  name         String
+  address      String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  students     Student[]
+  teachers     Teacher[]
   userProfiles UserProfile[]
 }
 
@@ -40,7 +40,7 @@ model UserProfile {
   country        String?
   profilePicture String?
   isActive       String?
-  schoolId       String?  
+  schoolId       String?
   school         School?   @relation(fields: [schoolId], references: [schoolId])
   student        Student[] @relation("Studentsprofile")
   parent         Parent[]  @relation("parentsprofile")
@@ -60,7 +60,7 @@ model scisUser {
   teachers    Teacher[]
   tokens      Token[]      @relation("UserTokens")
   userProfile UserProfile? @relation("UserProfileToScisUser")
-  roles       Role?       @relation(fields: [roleId], references: [name])
+  roles       Role?        @relation(fields: [roleId], references: [name])
 }
 
 model Role {
@@ -68,7 +68,7 @@ model Role {
   name      String     @unique
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  users     scisUser[] 
+  users     scisUser[]
 }
 
 model Token {
@@ -83,32 +83,30 @@ model Token {
 
 model Teacher {
   id        Int           @id @default(autoincrement())
-  name      String
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
-  userId    Int?
-  schoolId  Int
+  TeacheruserId    String
+  schoolId  String
   subjects  Subject[]     @relation("SubjectTeacher")
-  school    School        @relation(fields: [schoolId], references: [id])
-  user      scisUser?     @relation(fields: [userId], references: [id])
+  school    School        @relation(fields: [schoolId], references: [schoolId])
+  user      scisUser?     @relation(fields: [TeacheruserId], references: [scisuserid])
   profile   UserProfile[] @relation("Teachersprofile")
 }
 
 model ClassLevel {
-  id               Int       @id @default(autoincrement())
-  classId          String    @unique
-  year             String
-  level            String?
-  class            String
-  combination      String?
-  stream           String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  students         Student[] @relation("ClassLevelStudents")
-  subjects         Subject[] @relation("ClassLevelSubjects")
-  tests            Test[]    @relation("ClassLevelTests") // Added this line to establish the one-to-many relationship with Test
+  id          Int       @id @default(autoincrement())
+  classId     String    @unique
+  year        String
+  level       String?
+  class       String
+  combination String?
+  stream      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  students    Student[] @relation("ClassLevelStudents")
+  subjects    Subject[] @relation("ClassLevelSubjects")
+  tests       Test[]    @relation("ClassLevelTests") // Added this line to establish the one-to-many relationship with Test
 }
-
 
 model Subject {
   id          Int          @id @default(autoincrement())
@@ -124,22 +122,20 @@ model Subject {
 model Test {
   id             Int              @id @default(autoincrement())
   testId         String           @unique
-  ExamType       String           // ASS1, ASS2, QUIZ1, MIDTERMMARCH, MIDTERMSEPT, ANNUAL, etc.
-  ExamClassLevel  String?
-  TotalMarks      String
-  ExamDate        String?
-  ExamStartTime   String?
-  ExamDuration    String?
+  ExamType       String // ASS1, ASS2, QUIZ1, MIDTERMMARCH, MIDTERMSEPT, ANNUAL, etc.
+  ExamClassLevel String?
+  TotalMarks     String
+  ExamDate       String?
+  ExamStartTime  String?
+  ExamDuration   String?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   subjectId      String
   studentResults StudentResults[]
 
-  subject   Subject   @relation(fields: [subjectId], references: [subjectId])
+  subject    Subject     @relation(fields: [subjectId], references: [subjectId])
   classLevel ClassLevel? @relation("ClassLevelTests", fields: [ExamClassLevel], references: [classId])
 }
-
-
 
 //grades table type i.e necta o-level ,a-level ,primary grades,  that is pulled so that grading can be done 
 
@@ -185,13 +181,12 @@ model Student {
 }
 
 model Parent {
-  id        Int           @id @default(autoincrement())
-  name      String
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  userId    String?       @unique
-  studentId String
-  student   Student?      @relation(fields: [studentId], references: [studentUserId])
-  user      scisUser?     @relation(fields: [userId], references: [scisuserid])
-  profile   UserProfile[] @relation("parentsprofile")
+  id           Int           @id @default(autoincrement())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  parentUserId String        @unique
+  studentId    String
+  student      Student?      @relation(fields: [studentId], references: [studentUserId])
+  user         scisUser?     @relation(fields: [parentUserId], references: [scisuserid])
+  profile      UserProfile[] @relation("parentsprofile")
 }
