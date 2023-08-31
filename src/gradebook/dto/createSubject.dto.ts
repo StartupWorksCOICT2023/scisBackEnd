@@ -10,8 +10,12 @@ export class createSubjectDto{
     @IsString()
     name : string
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     teacherId : string
+
+    @IsNotEmpty()
+    @IsString()
+    ClassLevelId : string
     
 }

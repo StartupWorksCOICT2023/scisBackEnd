@@ -69,9 +69,7 @@ export class GradebookController {
   createSubject(
     @Body() dto: createSubjectDto
   ) {
-    return this.GradebookService.createSubject(
-      dto
-    )
+    return this.GradebookService.createSubject(dto)
   }
 
   @Get('subjects')
@@ -198,6 +196,12 @@ export class GradebookController {
     return this.GradebookService.getAllStudents()
   }
 
+  @Get('student/ofparent/:Parentid')
+  getStudentsOfParent(
+    @Param('Parentid') ParentId: string
+  ) {
+    return this.GradebookService.getStudentsOfParent(ParentId)
+  }
 
   @Post('student')
   createStudent(
@@ -237,6 +241,20 @@ export class GradebookController {
     return this.GradebookService.getAllTeachers()
   }
 
+  // Parent Endpoints
+
+  @Get('parent')
+  getAllParents() {
+    return this.GradebookService.getAllParents()
+  }
+
+
+  @Get('parent/:studentId')
+  getParentsOfaStudent(
+    @Param('studentId') studentId: string
+  ){
+    return this.GradebookService.getParentsOfaStudent(studentId)
+  }
 
 
 

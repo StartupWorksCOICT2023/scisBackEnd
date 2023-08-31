@@ -25,10 +25,6 @@ export class CreateUserprofileDto{
   @IsOptional()
   secondname ?: string
 
-  // @IsString()
-  // @IsOptional()
-  // Entryclasslevel ?: string
-
   @IsOptional()
   @IsString()
   dob ?: string  // if a parent dob is not known

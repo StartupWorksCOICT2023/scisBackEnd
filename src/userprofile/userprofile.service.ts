@@ -167,6 +167,7 @@
         }
 
         async createParentUserprofiles(scisid: string, dto: CreateUserprofileDto) {
+            
             console.log(scisid);
             console.log(dto);
         
@@ -235,7 +236,6 @@
             }
 
         }
-
         
         async createTeacherUserprofiles(scisid: string, dto: CreateUserprofileDto) {
             console.log(scisid);
