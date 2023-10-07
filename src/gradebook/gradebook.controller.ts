@@ -109,46 +109,10 @@ export class GradebookController {
     return this.GradebookService.createStudentResult(dto)
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   @Post('uploadStudentResults')
   uploadStudentResults() {
     return this.GradebookService.uploadResultsbyExcelFiles()
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   @Get('studentResults/student/:studentId')

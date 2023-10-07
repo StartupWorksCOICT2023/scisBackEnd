@@ -12,7 +12,6 @@ export class GradebookService {
 
 
     // School Ednpoints
-
     async getAllSchool() {
 
         const allSchools = await this.prisma.school.findMany();
@@ -23,17 +22,34 @@ export class GradebookService {
     // Test Endpoints
 
     async getAllTest() {
-        const allTests = await this.prisma.test.findMany();
+        const allTests = await this.prisma.test.findMany({
+            select: {
+                testId: true,
+                ExamClassLevel: true,
+                ExamDate: true,
+                ExamDuration: true,
+                ExamStartTime: true,
+                ExamType: true,
+                subjectId: true,
+                TotalMarks: true,
+                subject : {
+                    select:{
+                        name: true,
+                        TeacherId: true
+                    }
+                }
+            },
+        });
         return allTests;
     }
 
     async createTest(dto: createTestDto) {
 
-        console.log(dto.testId)
+        console.log(dto)
 
         const testExists = await this.prisma.test.findFirst({
             where: {
-                testId: dto.testId,
+                 testId: dto.testId
             },
         });
 
@@ -121,28 +137,13 @@ export class GradebookService {
         return deletedTest;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Subject Endpoints
     async createSubject(dto: createSubjectDto) {
 
         const isSubjectPresent = await this.prisma.subject.findFirst({
             where: {
-                subjectId: dto.subjectId,
                 name: dto.name,
                 classLevelId: dto.ClassLevelId,
-                // TeacherId: dto.teacherId,
             }
         })
 
@@ -151,18 +152,18 @@ export class GradebookService {
             // return "this result is present, please confirm or edit arleady present entry"
         }
 
-        const createSubjectId = `${dto.ClassLevelId}-${dto.name}`
-
+    
         const createResult = await this.prisma.subject.create({
-            data: {
-                subjectId:createSubjectId,
-                name:dto.name,
-                classLevelId:dto.teacherId,
-            },
-        });
+            data:{
+                subjectId: `${dto.ClassLevelId}-${dto.name}`,
+                name: dto.name,
+                classLevelId: dto.ClassLevelId,
+                // TeacherId: dto.teacherId
+            }
+        })
 
         if (createResult) {
-            return "created subject succesffully"
+            return `created subject succesffully ${createResult}`
         }
 
     }
@@ -172,13 +173,13 @@ export class GradebookService {
             select: {
                 subjectId: true,
                 name: true,
-                // teacher: true,
                 tests: true,
                 classLevels: true
             },
         });
         return allSubjects;
     }
+
     // we might have to change this to, find subjects by class, 
     //                                                by name,
     //                                                by student
@@ -249,7 +250,6 @@ export class GradebookService {
     }
 
 
-
     // StudentResult Endpoints
 
     async createStudentResult(dto: createstudentResultDto) {
@@ -287,11 +287,20 @@ export class GradebookService {
     }
 
     async getStudentResultByStudentId(studentId: string) {
+
+        console.log(studentId);
+        
+        // WE ARE CHANGING THIS TO GETTING EXAM RESULTS AND THE EXAM OR TEST DATA
+        // FOR ORGANSIATION IN THE FRONT END
+
         try {
             const studentResultsById = await this.prisma.studentResults.findMany({
                 where: {
                     studentId: studentId,
                 },
+                include: {
+                    test: true,
+                }
             });
 
             return studentResultsById;
@@ -308,6 +317,9 @@ export class GradebookService {
                 where: {
                     testId: testId,
                 },
+                include: {
+                    student: true
+                }
             });
 
             return studentResultsByTestId;
@@ -320,6 +332,8 @@ export class GradebookService {
 
     async updateStudentResult(dto: updateStudentResultDto) {
 
+        console.log(dto);
+        
         const isResultEntryPresent = await this.prisma.studentResults.findFirst({
             where: {
                 studentId: dto.studentId,
@@ -328,8 +342,8 @@ export class GradebookService {
             }
         })
 
-        if (isResultEntryPresent) {
-            throw new Error('"this result is present, please confirm or edit arleady present entry"')
+        if (!isResultEntryPresent) {
+            throw new Error('"this result is not present, please confirm or preview if arleady updated"')
             // return "this result is present, please confirm or edit arleady present entry"
         }
 
@@ -345,6 +359,8 @@ export class GradebookService {
         });
 
         if (updatedResultEntry) {
+            console.log('successfully updated results')
+            console.log(updatedResultEntry);
             return updatedResultEntry;
         }
 

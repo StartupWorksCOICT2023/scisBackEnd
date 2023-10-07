@@ -69,6 +69,8 @@ export class UserprofileController {
       dto
     )
   }
+
+  
   @Delete(':id')
   deleteUserprofileById(
     @Param('id') scisid: string,
