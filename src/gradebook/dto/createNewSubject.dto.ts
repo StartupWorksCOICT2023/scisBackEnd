@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
-export class createSubjectDto{
+export class createNewSubject{
 
     @IsNotEmpty()
     @IsString()
@@ -12,7 +12,7 @@ export class createSubjectDto{
 
     @IsNotEmpty()
     @IsString()
-    ClassLevelId : string
+    classLevelId : string
 
     
 }

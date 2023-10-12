@@ -9,3 +9,4 @@ export * from './editStudent.dto';
 export * from './createClass.dto';
 export * from './editClass.dto';
 export * from './updateBatchStudentResult.dto';
+export * from './createNewSubject.dto';

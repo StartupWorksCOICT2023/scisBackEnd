@@ -73,6 +73,30 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 Nest is [MIT licensed](LICENSE).
 
 
+## Support
+
+To access the prisma studio just
+
+  - cd scis-apis
+  - prisma studio
+
+In case there are problems with data not being reflected or being picked up by intellisense just run
+
+  - prisma generate
+
+  if it brings this error "EPERM: operation not permitted, unlink 'D:\DEVELOPMENT\SCISBACKEND\scis-apis\node_modules\.prisma\client\query_engine-windows.dll.node'"
+
+  delete prisma file in node modules and run
+  -  npm install
+
+  followed by 
+
+  - prisma generate
+
+  then you should be good to go
+
+
+
 
 
 ## CURRENT_EXISTING_ENDPOINTS;

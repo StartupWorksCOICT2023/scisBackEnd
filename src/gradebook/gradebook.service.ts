@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { createSubjectDto, createTestDto, createclassDto, createstudentDto, createstudentResultDto, editSubjectDto, editTestDto, editclassDto, editstudentDto, updateBatchStudentResultDto, updateStudentResultDto } from './dto';
+import {  createNewSubject, createSubjectDto, createTestDto, createclassDto, createstudentDto, createstudentResultDto, editSubjectDto, editTestDto, editclassDto, editstudentDto, updateBatchStudentResultDto, updateStudentResultDto } from './dto';
 import { NotFoundException } from '@nestjs/common';
 import { test } from 'node:test';
 
@@ -18,6 +18,8 @@ export class GradebookService {
         return allSchools;
 
     }
+
+
 
     // Test Endpoints
 
@@ -64,13 +66,13 @@ export class GradebookService {
                 ExamClassLevel: dto.ExamClassLevel,
                 ExamType: dto.ExamType,
                 subjectId: dto.subjectId,
-                // ExamDate: dto.ExamDate,
-                // ExamStartTime: dto.ExamStartTime,
-                // ExamDuration: dto.ExamDuration,
+                ExamDate: dto.ExamDate,
+                ExamStartTime: dto.ExamStartTime,
+                ExamDuration: dto.ExamDuration,
             },
         });
 
-        return testCreated;
+        return  `created Test succesffully ${testCreated}`;
     }
 
     async getTestById(testId: string) {
@@ -137,13 +139,19 @@ export class GradebookService {
         return deletedTest;
     }
 
+
+    
+
     // Subject Endpoints
-    async createSubject(dto: createSubjectDto) {
+    async createSubject(dto: createNewSubject) {
+
+        console.log(dto);
+        
 
         const isSubjectPresent = await this.prisma.subject.findFirst({
             where: {
                 name: dto.name,
-                classLevelId: dto.ClassLevelId,
+                classLevelId: dto.classLevelId,
             }
         })
 
@@ -152,20 +160,25 @@ export class GradebookService {
             // return "this result is present, please confirm or edit arleady present entry"
         }
 
+        if(!isSubjectPresent){
+
+            const createResult = await this.prisma.subject.create({
+                data:{
+                    subjectId: `${dto.classLevelId}-${dto.name}`,
+                    name: dto.name,
+                    classLevelId: dto.classLevelId,
+                    TeacherId: dto.TeacherId
+                }
+            })
     
-        const createResult = await this.prisma.subject.create({
-            data:{
-                subjectId: `${dto.ClassLevelId}-${dto.name}`,
-                name: dto.name,
-                classLevelId: dto.ClassLevelId,
-                // TeacherId: dto.teacherId
+            if (createResult) {
+                return `created subject succesffully ${createResult}`;
             }
-        })
+    
 
-        if (createResult) {
-            return `created subject succesffully ${createResult}`
         }
-
+    
+       
     }
 
     async getAllSubjects() {
@@ -184,6 +197,24 @@ export class GradebookService {
     //                                                by name,
     //                                                by student
     //                                                by teacher  
+
+    // GET SUBJECTS OF A TEACHER
+    
+    async getAllSubjectsOfATeacher(teacherid : string) {
+        const allSubjects = await this.prisma.subject.findMany({
+            where:{
+                TeacherId: teacherid,
+            },
+            select: {
+                subjectId: true,
+                name: true,
+                tests: true,
+                classLevels: true
+            },
+            
+        });
+        return allSubjects;
+    }
 
     async getSubjectById(subjectId: string) {
         const subject = await this.prisma.subject.findFirst({
@@ -248,6 +279,10 @@ export class GradebookService {
         return deletedTest;
 
     }
+
+
+
+
 
 
     // StudentResult Endpoints
