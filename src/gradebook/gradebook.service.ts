@@ -330,14 +330,18 @@ export class GradebookService {
 
         try {
             const studentResultsById = await this.prisma.studentResults.findMany({
-                where: {
-                    studentId: studentId,
+              where: {
+                studentId: studentId,
+              },
+              include: {
+                test: {
+                  include: {
+                    subject: true, // Include the subject associated with the test
+                  },
                 },
-                include: {
-                    test: true,
-                }
+              },
             });
-
+        
             return studentResultsById;
         } catch (error) {
             // Handle the error appropriately
@@ -473,6 +477,28 @@ export class GradebookService {
             });
 
             return studentById;
+
+        } catch (error) {
+            // Handle the error appropriately
+            console.error(`Error retrieving student for students, error`);
+            throw new Error(`Failed to retrieve students`);
+        }
+
+    }
+
+    async getAllStudentsCount() {
+
+        try {
+            const studentById = await this.prisma.scisUser.findMany({
+                where: {
+                    roleId: 'student',
+                }, include: {
+                    userProfile: true,
+                    
+                }
+            });
+
+            return studentById.length;
 
         } catch (error) {
             // Handle the error appropriately
@@ -833,6 +859,28 @@ export class GradebookService {
 
     }
 
+    
+    async getAllTeachersCount() {
+
+        try {
+            const AllTeachers = await this.prisma.scisUser.findMany({
+                where: {
+                    roleId: 'teacher',
+                }, include: {
+                    userProfile: true
+                }
+            });
+
+            return AllTeachers.length;
+
+        } catch (error) {
+            // Handle the error appropriately
+            console.error(`Error retrieving teachers, ${error}`);
+            throw new Error(`Failed to retrieve students`);
+        }
+
+    }
+
 
     //parents Enpoints
 
@@ -863,7 +911,10 @@ export class GradebookService {
             const parents = await this.prisma.parent.findMany({
                 where: {
                     studentId: studentId,
-                }, 
+                },
+                include: {
+                    profile: true
+                }
             });
 
             return parents;

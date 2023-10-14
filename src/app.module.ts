@@ -9,6 +9,8 @@ import { UserProfileService } from './userprofile/userprofile.service'
 // import { GardebookService } from './gardebook/gardebook.service';
 import { GradebookService } from './gradebook/gradebook.service';
 import { GradebookController } from './gradebook/gradebook.controller';
+import { SchedulingController } from './scheduling/dto/scheduling.controller';
+import { SchedulingService } from './scheduling/dto/schedule.service';
 
 @Module({
   imports: [
@@ -19,7 +21,7 @@ import { GradebookController } from './gradebook/gradebook.controller';
       isGlobal: true,
     })
   ],
-  controllers: [UserprofileController,GradebookController],
-  providers: [UserProfileService, GradebookService],
+  controllers: [UserprofileController,GradebookController, SchedulingController],
+  providers: [UserProfileService, GradebookService, SchedulingService],
 })
 export class AppModule {}

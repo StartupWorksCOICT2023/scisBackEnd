@@ -168,6 +168,11 @@ export class GradebookController {
     return this.GradebookService.getAllStudents()
   }
 
+  @Get('student/count')
+  getAllStudentsCount() {
+    return this.GradebookService.getAllStudentsCount()
+  }
+
   @Get('student/ofparent/:Parentid')
   getStudentsOfParent(
     @Param('Parentid') ParentId: string
@@ -198,7 +203,6 @@ export class GradebookController {
     return this.GradebookService.updateStudent(dto)
   }
 
-
   @Delete('student/:studentId')
   deleteStudentById(
     @Param('studentId') studentId: string
@@ -213,7 +217,12 @@ export class GradebookController {
     return this.GradebookService.getAllTeachers()
   }
 
-  // Parent Endpoints
+  @Get('teacher/count')
+  getAllTeachersCount() {
+    return this.GradebookService.getAllTeachersCount()
+  }
+
+  // PARENTS ENDPOINTS
 
   @Get('parent')
   getAllParents() {

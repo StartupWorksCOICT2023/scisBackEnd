@@ -192,3 +192,16 @@ model Parent {
   user         scisUser?     @relation(fields: [parentUserId], references: [scisuserid])
   profile      UserProfile[] @relation("parentsprofile")
 }
+
+model Event {
+  id            Int      @id @default(autoincrement())
+  description   String
+  startTime     DateTime
+  endTime       DateTime
+  location      String
+  recurrenceRule String?
+  isAllDay      Boolean
+  subject       String
+
+  // You can add relationships to other models if needed
+}
