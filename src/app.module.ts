@@ -9,8 +9,8 @@ import { UserProfileService } from './userprofile/userprofile.service'
 // import { GardebookService } from './gardebook/gardebook.service';
 import { GradebookService } from './gradebook/gradebook.service';
 import { GradebookController } from './gradebook/gradebook.controller';
-import { SchedulingController } from './scheduling/dto/scheduling.controller';
-import { SchedulingService } from './scheduling/dto/schedule.service';
+import { SchedulingController } from './scheduling/scheduling.controller';
+import { SchedulingService } from './scheduling/schedule.service';
 
 @Module({
   imports: [

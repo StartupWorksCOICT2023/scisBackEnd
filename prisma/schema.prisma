@@ -194,14 +194,14 @@ model Parent {
 }
 
 model Event {
-  id            Int      @id @default(autoincrement())
-  description   String
-  startTime     DateTime
-  endTime       DateTime
-  location      String
-  recurrenceRule String?
-  isAllDay      Boolean
-  subject       String
+  Id            Int      @id @default(autoincrement())
+  Description   String
+  StartTime     DateTime
+  EndTime       DateTime
+  Location      String
+  RecurrenceRule String?
+  IsAllDay      Boolean
+  Subject       String
 
   // You can add relationships to other models if needed
 }
