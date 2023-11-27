@@ -22,6 +22,13 @@ export class AuthController {
     return this.authService.signin(dto);
   }
 
+  @HttpCode(HttpStatus.OK)
+  @Post('signup')  //            /auth/signin
+  signup(@Body() dto: AuthDto) {
+    return this.authService.signup(dto);
+  }
+
+
   @UseGuards(RefreshJwtGuard)
   @Post('refresh') // /auth/refresh
   async refreshToken(@Body() body: { refresh: string }) {

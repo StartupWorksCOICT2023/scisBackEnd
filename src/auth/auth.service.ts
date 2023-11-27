@@ -60,6 +60,35 @@ export class AuthService {
   }
 
 
+  @Post('signup')
+   async signup(dto: AuthDto) {
+    const { scisuserid, password } = dto;
+    // find the user by scisuserid
+    const scisuser = await this.prisma.scisUser.findUnique({
+      where: {
+        scisuserid: scisuserid
+      },
+      include: { userProfile: true },
+    });
+
+    if (scisuser)
+      throw new ForbiddenException(
+        'User found, Cant create a user',
+      );
+
+    const usercreated = await this.prisma.scisUser.create({
+      data: {
+        password: password,
+        scisuserid: scisuserid,
+        roleId: 'admin',
+      },
+    });
+
+    console.log('User created successfully!');
+    
+  }
+
+
 
  
   // CROSSCHECK THIS  this
