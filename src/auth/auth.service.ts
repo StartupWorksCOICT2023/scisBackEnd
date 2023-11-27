@@ -7,15 +7,15 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-    constructor (private prisma: PrismaService,
-      private jwt: JwtService,
-      private config: ConfigService,
-      ){}
-    
-   //creating an endpoint
+  constructor(private prisma: PrismaService,
+    private jwt: JwtService,
+    private config: ConfigService,
+  ) { }
 
-   @Post('signin')
-   async signin(dto: AuthDto) {
+  //creating an endpoint
+
+  @Post('signin')
+  async signin(dto: AuthDto) {
     const { scisuserid, password } = dto;
     // find the user by scisuserid
     const scisuser = await this.prisma.scisUser.findUnique({
@@ -23,9 +23,9 @@ export class AuthService {
         scisuserid: scisuserid
       },
       include: { userProfile: true },
-      
+
     });
-  
+
     console.log(scisuser)
     // if user does not exist throw exception
     if (!scisuser)
@@ -41,7 +41,7 @@ export class AuthService {
 
     // Current usage is 
     const pwMatches = scisuser.password
-    
+
     // if password incorrect throw exception
     if (!pwMatches)
       throw new ForbiddenException(
@@ -49,20 +49,42 @@ export class AuthService {
       );
 
 
-      // call the sign token to get the tokens.
-      const tokens = await this.signToken(scisuser.scisuserid, scisuser.id);
+    // call the sign token to get the tokens.
+    const tokens = await this.signToken(scisuser.scisuserid, scisuser.id);
 
-      // combine our tokens with our user
-      return {
-        ...tokens,
-       user: scisuser,
-  };
+    // combine our tokens with our user
+    return {
+      ...tokens,
+      user: scisuser,
+    };
   }
 
 
   @Post('signup')
-   async signup(dto: AuthDto) {
+  async signup(dto: AuthDto) {
     const { scisuserid, password } = dto;
+
+
+    const roles = ['teacher', 'admin', 'student', 'superadmin', 'parent'];
+
+    for (const roleName of roles) {
+      const existingRole = await this.prisma.role.findUnique({
+        where: {
+          name: roleName,
+        },
+      });
+
+      if (!existingRole) {
+        await this.prisma.role.create({
+          data: {
+            name: roleName,
+          },
+        });
+      }
+    }
+
+
+
     // find the user by scisuserid
     const scisuser = await this.prisma.scisUser.findUnique({
       where: {
@@ -85,12 +107,12 @@ export class AuthService {
     });
 
     console.log('User created successfully!');
-    
+
   }
 
 
 
- 
+
   // CROSSCHECK THIS  this
   async signToken(
     scisuserid: string,
@@ -122,7 +144,7 @@ export class AuthService {
 
 
     // create a refresh token here 
-      // debugging
+    // debugging
     console.log(`access token: ${token}`)
     console.log(`refresh token: ${refresh}`)
 
@@ -132,89 +154,89 @@ export class AuthService {
     };
   }
 
-  
+
   // CROSSCHECK THIS  this
   async refreshToken(refreshToken: string): Promise<{ access_token: string }> {
-  const secret = this.config.get('JWT_SECRET');
+    const secret = this.config.get('JWT_SECRET');
 
-  // Verify the refresh token
-  const decoded = await this.jwt.verifyAsync(refreshToken, { secret });
+    // Verify the refresh token
+    const decoded = await this.jwt.verifyAsync(refreshToken, { secret });
 
-  // Extract the necessary payload information
-  const scisuserid = decoded.sub;
-  const id = decoded.id;
+    // Extract the necessary payload information
+    const scisuserid = decoded.sub;
+    const id = decoded.id;
 
-  const payload = {
-    sub: scisuserid,
-    id,
-  };
+    const payload = {
+      sub: scisuserid,
+      id,
+    };
 
-  // Generate a new access token
-  const token = await this.jwt.signAsync(payload, {
-    expiresIn: '10m', // Time to expire is 4 minutes
-    secret: secret,
-  });
-
-
-
-  // debugging
-  console.log(token)
-
-  return {
-    access_token: token,
-  };
-}
+    // Generate a new access token
+    const token = await this.jwt.signAsync(payload, {
+      expiresIn: '10m', // Time to expire is 4 minutes
+      secret: secret,
+    });
 
 
-// logout operations
 
-@Post('logout')     //auth/logout
-async logout() {
-  // You can perform any necessary operations here to invalidate the user's tokens
-  // For example, you can remove the tokens from the database or add them to a blacklist
-  // This depends on your specific implementation and requirements
+    // debugging
+    console.log(token)
 
-  // Return a response indicating a successful logout
-  return {
-    message: 'Logout successful',
-  };
-}
-
-
-@Post('changepassword')     //auth/logout
-async changePassword( userId: string ,currentPassword: string, newPassword: string) {
-  const scisuser = await this.prisma.scisUser.findUnique({
-    where: {
-      scisuserid: userId,
-    },
-  });
-
-  const isPasswordValid = await argon.verify(
-    scisuser.password,
-    currentPassword,
-  );
-
-  if (!isPasswordValid) {
-    throw new ForbiddenException('Invalid current password');
+    return {
+      access_token: token,
+    };
   }
 
-  // Encrypt the new password
-  const hashedNewPassword = await argon.hash(newPassword);
 
-  // Update the user's password with the new hashed password
-  await this.prisma.scisUser.update({
-    where: {
-      scisuserid: userId,
-    },
-    data: {
-      password: hashedNewPassword,
-    },
-  });
+  // logout operations
 
-  return { message: 'Password changed successfully' };
-}
+  @Post('logout')     //auth/logout
+  async logout() {
+    // You can perform any necessary operations here to invalidate the user's tokens
+    // For example, you can remove the tokens from the database or add them to a blacklist
+    // This depends on your specific implementation and requirements
+
+    // Return a response indicating a successful logout
+    return {
+      message: 'Logout successful',
+    };
+  }
 
 
-// one time password OTP, for forget password
+  @Post('changepassword')     //auth/logout
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
+    const scisuser = await this.prisma.scisUser.findUnique({
+      where: {
+        scisuserid: userId,
+      },
+    });
+
+    const isPasswordValid = await argon.verify(
+      scisuser.password,
+      currentPassword,
+    );
+
+    if (!isPasswordValid) {
+      throw new ForbiddenException('Invalid current password');
+    }
+
+    // Encrypt the new password
+    const hashedNewPassword = await argon.hash(newPassword);
+
+    // Update the user's password with the new hashed password
+    await this.prisma.scisUser.update({
+      where: {
+        scisuserid: userId,
+      },
+      data: {
+        password: hashedNewPassword,
+      },
+    });
+
+    return { message: 'Password changed successfully' };
+  }
+
+
+  // one time password OTP, for forget password
 
 }
