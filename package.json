@@ -10,7 +10,7 @@
     "db:dev:rm": "docker compose rm scis-db -s -f -v",
     "db:dev:up": "docker compose up scis-db -d",
     "db:dev:restart": "npm run db:dev:rm && npm run db:dev:up && sleep 1 && prisma:dev:deploy",
-    "build": "nest build",
+    "build": "nest build && npx prisma db seed",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -84,5 +84,8 @@
   },
   "engines": {
     "node": ">=18.18.0 <19.0.0"
-  }
+  },
+  "prisma": {
+    "seed": "ts-node prisma\\seed.ts"
+  }  
 }
