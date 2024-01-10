@@ -1,12 +1,18 @@
 import { IsNotEmpty, IsString, IsInt, IsOptional, IsNumber } from 'class-validator';
 
-export class createstudentDto{
+export class editSchoolDto{
 
     @IsNotEmpty()
     @IsString()
     schoolId : string
 
+    @IsOptional()
+    @IsString()
+    name : string
+
+    @IsOptional()
     @IsString()
     address : string
 
+    
 }

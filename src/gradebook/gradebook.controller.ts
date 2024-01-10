@@ -3,7 +3,7 @@ import { JwtGuard } from 'src/auth/guard';
 // import services
 // import dto
 import { GetUserprofile } from '../auth/decorator';
-import { createNewSubject, createSubjectDto, createTestDto, createclassDto, createstudentDto, createstudentResultDto, editSubjectDto, editTestDto, editclassDto, editstudentDto, updateBatchStudentResultDto, updateStudentResultDto } from './dto';
+import { createNewSubject, createSubjectDto, createTestDto, createclassDto, createstudentDto, createstudentResultDto, editSubjectDto, editTestDto, editclassDto, editstudentDto, updateBatchStudentResultDto, updateStudentResultDto, createSchoolDto, editSchoolDto } from './dto';
 import { GradebookService } from './gradebook.service';
 
 @UseGuards(JwtGuard)
@@ -19,6 +19,27 @@ export class GradebookController {
   @Get('schools')
   getAllSchool(){
     return this.GradebookService.getAllSchool()
+  }
+
+  @Post('Schools')
+  createSchool(
+    @Body() dto: createSchoolDto
+  ){
+    return this.GradebookService.createSchool(dto)
+  }
+
+  @Patch('schools')
+  updateSchool(
+    @Body() dto: editSchoolDto
+  ){
+    return this.GradebookService.updateSchool(dto)
+  }
+
+  @Delete('schools/:schoolId')
+  deleteSchool(
+    @Param('schoolId') schoolId: string
+  ){
+    return this.GradebookService.deleteSchool(schoolId)
   }
 
 

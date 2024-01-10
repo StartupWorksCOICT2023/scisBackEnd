@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {  createNewSubject, createSubjectDto, createTestDto, createclassDto, createstudentDto, createstudentResultDto, editSubjectDto, editTestDto, editclassDto, editstudentDto, updateBatchStudentResultDto, updateStudentResultDto } from './dto';
+import {  createNewSubject, createSchoolDto, createSubjectDto, createTestDto, createclassDto, createstudentDto, createstudentResultDto, editSchoolDto, editSubjectDto, editTestDto, editclassDto, editstudentDto, updateBatchStudentResultDto, updateStudentResultDto } from './dto';
 import { NotFoundException } from '@nestjs/common';
 import { test } from 'node:test';
 
@@ -19,7 +19,73 @@ export class GradebookService {
 
     }
 
+    async createSchool(dto: createSchoolDto) {
+        const isSchoolPresent = await this.prisma.school.findFirst({
+            where: {
+                schoolId: dto.schoolId,
+            }
+        });
 
+        if (isSchoolPresent) {
+            throw new Error('This school ID is already present, please confirm or edit the already present entry');
+        }
+
+        const newSchool = await this.prisma.school.create({
+            data: {
+                schoolId: dto.schoolId,
+                name: dto.name,
+                address: dto.address,
+                // Add other properties as needed
+            },
+        });
+
+        return newSchool;
+    }
+
+    async updateSchool(dto: editSchoolDto) {
+        const school = await this.prisma.school.findFirst({
+            where: {
+                schoolId: dto.schoolId,
+            },
+        });
+
+        if (!school) {
+            throw new Error('This school does not exist');
+        }
+
+        const updatedSchool = await this.prisma.school.update({
+            where: {
+                schoolId: dto.schoolId,
+            },
+            data: {
+                name: dto.name,
+                address: dto.address,
+                // Add other properties as needed
+            },
+        });
+
+        return updatedSchool;
+    }
+
+    async deleteSchool(schoolId: string){
+        const school = await this.prisma.school.findFirst({
+            where: {
+                schoolId: schoolId,
+            },
+        });
+
+        if (!school) {
+            throw new Error('This school does not exist');
+        }
+
+        const deletedSchool = await this.prisma.school.delete({
+            where: {
+                schoolId: schoolId,
+            },
+        });
+
+        return deletedSchool;
+    }
 
     // Test Endpoints
 
@@ -45,12 +111,16 @@ export class GradebookService {
         return allTests;
     }
 
+
+    // WHEN WE CREATE A TEST WE SHOULD CREATE AUTOMAICALLY THE NULL RESULTS FOR ALL THE STUDENTS
+    // NOT TESTED YET
     async createTest(dto: createTestDto) {
 
         console.log(dto)
 
         const testExists = await this.prisma.test.findFirst({
             where: {
+                 // perhaps we justcheck if unique subject time and date is arleady created
                  testId: dto.testId
             },
         });
@@ -71,6 +141,46 @@ export class GradebookService {
                 ExamDuration: dto.ExamDuration,
             },
         });
+
+        // but we should create an empty students results for the subject
+
+        const studentsTakingTest = await this.prisma.classLevel.findMany({
+            where: {
+                classId: dto.ExamClassLevel
+            },
+            
+            select: {
+                students: true
+            }
+        })
+
+        console.log(studentsTakingTest);
+
+        for (const student of studentsTakingTest) {
+            const isResultEntryPresent = await this.prisma.studentResults.findFirst({
+                where: {
+                    studentId: student.studentUserId,
+                    testId: dto.testId,
+                },
+            });
+    
+            if (isResultEntryPresent) {
+                throw new Error('Result entry already exists for this student and test');
+            }
+    
+            const createResult = await this.prisma.studentResults.create({
+                data: {
+                    studentId: student.studentUserId,
+                    testId: dto.testId,
+                    marksObtained: null,
+                },
+            });
+    
+            if (createResult) {
+                console.log(`Created result for student ${student.studentUserId} successfully`);
+            }
+        }
+    
 
         return  `created Test succesffully ${testCreated}`;
     }
@@ -138,9 +248,6 @@ export class GradebookService {
 
         return deletedTest;
     }
-
-
-    
 
     // Subject Endpoints
     async createSubject(dto: createNewSubject) {
@@ -280,13 +387,7 @@ export class GradebookService {
 
     }
 
-
-
-
-
-
     // StudentResult Endpoints
-
     async createStudentResult(dto: createstudentResultDto) {
 
         const isResultEntryPresent = await this.prisma.studentResults.findFirst({
@@ -314,7 +415,6 @@ export class GradebookService {
             return "created result succesffully"
         }
 
-
     }
 
     async uploadResultsbyExcelFiles() {
@@ -327,6 +427,10 @@ export class GradebookService {
         
         // WE ARE CHANGING THIS TO GETTING EXAM RESULTS AND THE EXAM OR TEST DATA
         // FOR ORGANSIATION IN THE FRONT END
+
+        // me months later
+        // i think what i was saying was, its better to get student resutlts from exams(biliogy form 2 test 1)
+        // it will give us a more collective data 
 
         try {
             const studentResultsById = await this.prisma.studentResults.findMany({
